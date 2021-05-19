@@ -58,6 +58,10 @@ class TestPythonScript(unittest.TestCase):
     def tearDown(self) -> None:
         run_cmd(f'rm -rf {self.SUBMITS_DIR} {self.INITIALS_DIR}')
 
+    def run_reset_script(self):
+        shutil.copy(self.BASE_DIR / 'reset.py', self.submit_repo)
+        run_cmd(f'python3 reset.py {self.initial_repo}', cwd=self.submit_repo)
+
     def create_submit_repo(self, *, src_repo) -> Path:
         run_cmd(f'git clone {src_repo}', cwd=self.SUBMITS_DIR)
         repo_name = src_repo.stem
@@ -69,8 +73,7 @@ class TestPythonScript(unittest.TestCase):
         nonsense_commit(self.submit_repo, number=nonsense_commit_number)
         commits_num_after = number_of_commits(self.submit_repo)
         self.assertEqual(commits_num_before + nonsense_commit_number, commits_num_after)
-        shutil.copy(self.BASE_DIR / 'reset.py', self.submit_repo)
-        run_cmd(f'python3 reset.py {self.initial_repo}', cwd=self.submit_repo)
+        self.run_reset_script()
         self.assertEqual(commits_num_before, number_of_commits(self.submit_repo))
 
     def test_files(self):
@@ -82,7 +85,6 @@ class TestPythonScript(unittest.TestCase):
         nonsense_commit(self.submit_repo, number=nonsense_commit_number)
         new_files = get_files_list(self.submit_repo)
         self.assertNotEqual(initial_files, new_files)
-        shutil.copy(self.BASE_DIR / 'reset.py', self.submit_repo)
-        run_cmd(f'python3 reset.py {self.initial_repo}', cwd=self.submit_repo)
+        self.run_reset_script()
         files_after_reset = get_files_list(self.submit_repo)
         self.assertEqual(initial_files, files_after_reset)
