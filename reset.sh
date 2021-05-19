@@ -6,10 +6,13 @@ git config credential.helper store
 
 origin_url=`git remote get-url origin`
 
-problem_id=`echo "$origin_url" | sed 's/.*\/p\-\([0-9]*\)\.git/\1/'`
-
-ao_url=`echo "$origin_url" | sed 's/\(.*[/:]ao\-[0-9]*\/\).*/\1/'`
-initial_remote_url=`echo "${ao_url}initial/initial-${problem_id}.git"`
+if [ -z "$1" ]; then
+  initial_remote_url="$1"
+else
+  problem_id=`echo "$origin_url" | sed 's/.*\/p\-\([0-9]*\)\.git/\1/'`
+  ao_url=`echo "$origin_url" | sed 's/\(.*[/:]ao\-[0-9]*\/\).*/\1/'`
+  initial_remote_url=`echo "${ao_url}initial/initial-${problem_id}.git"`
+fi
 
 git checkout --orphan $WATCHER_BRANCH
 git reset --hard
