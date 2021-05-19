@@ -1,0 +1,5 @@
+reset
+.idea/
+**/*.pyc
+tests/initials/
+tests/submits/
