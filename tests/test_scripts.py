@@ -43,7 +43,7 @@ def number_of_commits(path: Path):
 
 def get_files_list(path: Path):
     _, _, files = next(os.walk(path))
-    files = list(sorted(filter(lambda x: not x.startswith('reset.'), files)))
+    files = list(sorted(filter(lambda x: not x.startswith('qreset.'), files)))
     return files
 
 
@@ -64,6 +64,7 @@ def clone_with_branches(src_repo: Path, path: Path):
 
 class TestScripts(unittest.TestCase):
     BASE_DIR = Path(__file__).resolve().parent.parent
+    SCRIPTS_DIR = BASE_DIR / 'scripts'
     TESTS_DIR = BASE_DIR / 'tests'
     INITIALS_DIR = TESTS_DIR / 'initials'
     SUBMITS_DIR = TESTS_DIR / 'submits'
@@ -99,15 +100,16 @@ class TestScripts(unittest.TestCase):
         if lang not in self.VALID_LANG:
             raise Exception(f'lang should be one of followings: {self.VALID_LANG}')
 
-        shutil.copy(self.BASE_DIR / f'reset.{lang}', dst)
+        script_file_name = f'qreset.{lang}'
+        shutil.copy(self.SCRIPTS_DIR / script_file_name, dst)
         if lang == 'py':
-            run_cmd(f'python3 reset.py {initial_repo}', cwd=dst)
+            run_cmd(f'python3 {script_file_name} {initial_repo}', cwd=dst)
         elif lang == 'sh':
             # CHECK:
             #   This block of code may fail in Windows.
             #   We can not run a bash script in Windows like this.
-            subprocess.run(f'chmod +x reset.sh', cwd=dst, shell=True)
-            subprocess.run(f'./reset.sh {initial_repo}', cwd=dst, shell=True)
+            subprocess.run(f'chmod +x {script_file_name}', cwd=dst, shell=True)
+            subprocess.run(f'./{script_file_name} {initial_repo}', cwd=dst, shell=True)
 
     def raw_test_reset_commits(self, *, lang):
         initial_repo = self.create_initial_repo()
