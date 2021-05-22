@@ -27,32 +27,32 @@ def run(initial_remote_url=None):
         problem_id = re.fullmatch(r'.*/p-(\d+)\.git', origin_url).group(1)
         initial_remote_url = ''.join(re.split(r'([/:]ao-\d+/)', origin_url)[:-1]) + f'initial/initial-{problem_id}.git'
 
-    run_cmd(f"git checkout --orphan {WATCHER_BRANCH}")
-    run_cmd(f"git reset --hard")
+    run_cmd(f"git checkout --orphan {WATCHER_BRANCH} -q")
+    run_cmd(f"git reset --hard -q")
 
     submit_branches = get_branch_names()
     for branch in submit_branches:
-        run_cmd(f"git branch -D {branch}")
+        run_cmd(f"git branch -D {branch} -q")
 
     initial_remote_name = 'initial_project'
     run_cmd(f"git remote add {initial_remote_name} {initial_remote_url}")
 
-    run_cmd(f"git fetch {initial_remote_name}")
+    run_cmd(f"git fetch {initial_remote_name} -q")
     remote_branches = get_branch_names(ref=f'refs/remotes/{initial_remote_name}/')
     for branch in remote_branches:
         _, fork_branch_name = branch.split('/', 1)
-        run_cmd(f"git checkout -b {fork_branch_name} {branch}")
+        run_cmd(f"git checkout -b {fork_branch_name} {branch} -q")
 
     run_cmd(f"git remote rm {initial_remote_name}")
 
     branches = get_branch_names()
     if "master" in branches:
-        run_cmd(f"git checkout master")
+        run_cmd(f"git checkout master -q")
     elif "main" in branches:
-        run_cmd(f"git checkout main")
+        run_cmd(f"git checkout main -q")
 
-    run_cmd(f"git push --all -f")
-    run_cmd(f"git push --tags -f")
+    run_cmd(f"git push --all -f -q")
+    run_cmd(f"git push --tags -f -q")
 
 
 if __name__ == '__main__':
