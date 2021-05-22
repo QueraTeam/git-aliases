@@ -103,6 +103,9 @@ class TestScripts(unittest.TestCase):
         if lang == 'py':
             run_cmd(f'python3 reset.py {initial_repo}', cwd=dst)
         elif lang == 'sh':
+            # CHECK:
+            #   This block of code may fail in Windows.
+            #   We can not run a bash script in Windows like this.
             subprocess.run(f'chmod +x reset.sh', cwd=dst, shell=True)
             subprocess.run(f'./reset.sh {initial_repo}', cwd=dst, shell=True)
 
