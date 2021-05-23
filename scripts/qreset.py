@@ -1,7 +1,7 @@
-import subprocess
 import re
-from uuid import uuid4
+import subprocess
 import sys
+from uuid import uuid4
 
 
 def run_cmd(cmd: str):
@@ -43,7 +43,19 @@ def run(initial_remote_url=None):
         _, fork_branch_name = branch.split('/', 1)
         run_cmd(f"git checkout -b {fork_branch_name} {branch} -q")
 
-    run_cmd(f"git remote rm {initial_remote_name}")
+    local_tags = run_cmd(f"git tag -l").split()
+    for tag in local_tags:
+        run_cmd(f"git tag --delete {tag} -q")
+    run_cmd(f"git fetch --tags -f -q")
+    tags = run_cmd(f"git tag -l").split()
+    for tag in filter(lambda t: not t.startswith('submit'), tags):
+        run_cmd(f"git tag --delete {tag}")
+        run_cmd(f"git push -f --delete origin {tag} -q")
+    run_cmd(f"git fetch --tags {initial_remote_name} -q")
+
+    remotes = run_cmd(f"git remote").split()
+    for remote in filter(lambda r: r != 'origin', remotes):
+        run_cmd(f"git remote rm {remote}")
 
     branches = get_branch_names()
     if "master" in branches:
@@ -53,6 +65,8 @@ def run(initial_remote_url=None):
 
     run_cmd(f"git push --all -f -q")
     run_cmd(f"git push --tags -f -q")
+
+    print("Your repo have been reset to the initial state.")
 
 
 if __name__ == '__main__':
