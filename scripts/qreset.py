@@ -46,12 +46,12 @@ def run(initial_remote_url=None):
     local_tags = run_cmd(f"git tag -l").split()
     for tag in local_tags:
         run_cmd(f"git tag --delete {tag} -q")
-    run_cmd(f"git fetch --tags -f -q")
+    run_cmd(f"git fetch origin --tags -f -q")
     tags = run_cmd(f"git tag -l").split()
     for tag in filter(lambda t: not t.startswith('submit'), tags):
         run_cmd(f"git tag --delete {tag}")
         run_cmd(f"git push -f --delete origin {tag} -q")
-    run_cmd(f"git fetch --tags {initial_remote_name} -q")
+    run_cmd(f"git fetch {initial_remote_name} --tags -q")
 
     remotes = run_cmd(f"git remote").split()
     for remote in filter(lambda r: r != 'origin', remotes):

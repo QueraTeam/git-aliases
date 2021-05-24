@@ -36,7 +36,7 @@ local_tags=$(git tag -l)
 while IFS= read -r tag; do
   git tag --delete $tag
 done <<<"$local_tags"
-git fetch --tags -f -q
+git fetch origin --tags -f -q
 remote_tags=$(git tag -l)
 while IFS= read -r tag; do
   if [[ $tag != submit* ]]; then
@@ -44,7 +44,7 @@ while IFS= read -r tag; do
     git push -f --delete origin $tag -q
   fi
 done <<<"$remote_tags"
-git fetch --tags $initial_remote_name -q
+git fetch $initial_remote_name --tags -q
 
 remotes=$(git remote)
 while IFS= read -r remote; do
