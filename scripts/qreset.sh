@@ -22,7 +22,7 @@ while IFS= read -r branch; do
   git branch -D $branch -q
 done <<<"$submit_branches"
 
-initial_remote_name="initial_project"
+initial_remote_name=$(head /dev/urandom | tr -dc a-z | head -c15)
 git remote add $initial_remote_name $initial_remote_url
 git fetch $initial_remote_name -q
 

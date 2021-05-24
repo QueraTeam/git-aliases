@@ -34,7 +34,7 @@ def run(initial_remote_url=None):
     for branch in submit_branches:
         run_cmd(f"git branch -D {branch} -q")
 
-    initial_remote_name = 'initial_project'
+    initial_remote_name = uuid4().hex
     run_cmd(f"git remote add {initial_remote_name} {initial_remote_url}")
 
     run_cmd(f"git fetch {initial_remote_name} -q")
