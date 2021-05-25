@@ -15,22 +15,33 @@ else
 fi
 
 git checkout --orphan $WATCHER_BRANCH -q
+git remote rm origin
 git reset --hard -q
 
-submit_branches=$(git for-each-ref --format '%(refname:short)' refs/heads)
+local_branches=$(git for-each-ref --format '%(refname:short)' refs/heads)
 while IFS= read -r branch; do
   git branch -D $branch -q
-done <<<"$submit_branches"
+done <<<"$local_branches"
+git remote add origin $origin_url
+git fetch origin -q
+submit_remote_branches=$(git for-each-ref --format '%(refname:short)' refs/remotes/origin)
+while IFS= read -r branch; do
+  remote_name=$(echo $branch | cut -d'/' -f1)
+  branch_name=$(echo $branch | sed 's/[^/]*\/\(.*\)/\1/')
+  if [ "$branch_name" != "master" ] && [ "$branch_name" != "main" ]; then
+    git push --delete $remote_name $branch_name -q
+  fi
+done <<<"$submit_remote_branches"
 
 initial_remote_name=$(head /dev/urandom | tr -dc a-z | head -c15)
 git remote add $initial_remote_name $initial_remote_url
 git fetch $initial_remote_name -q
 
-remote_branches=$(git for-each-ref --format '%(refname:short)' refs/remotes/${initial_remote_name}/)
+initial_remote_branches=$(git for-each-ref --format '%(refname:short)' refs/remotes/${initial_remote_name}/)
 while IFS= read -r branch; do
   fork_branch_name=$(echo "$branch" | sed 's/[^/]*\/\(.*\)/\1/')
   git checkout -b $fork_branch_name $branch -q
-done <<<"$remote_branches"
+done <<<"$initial_remote_branches"
 
 local_tags=$(git tag -l)
 while IFS= read -r tag; do
