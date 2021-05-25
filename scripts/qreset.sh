@@ -29,7 +29,7 @@ while IFS= read -r branch; do
   remote_name=$(echo $branch | cut -d'/' -f1)
   branch_name=$(echo $branch | sed 's/[^/]*\/\(.*\)/\1/')
   if [ "$branch_name" != "master" ] && [ "$branch_name" != "main" ]; then
-    git push --delete $remote_name $branch_name -q
+    git push --delete $remote_name $branch_name -q > /dev/null
   fi
 done <<<"$submit_remote_branches"
 
@@ -51,8 +51,8 @@ git fetch origin --tags -f -q
 remote_tags=$(git tag -l)
 while IFS= read -r tag; do
   if [[ $tag != submit* ]]; then
-    git tag --delete $tag
-    git push -f --delete origin $tag -q
+    git tag --delete $tag > /dev/null
+    git push -f --delete origin $tag -q > /dev/null
   fi
 done <<<"$remote_tags"
 git fetch $initial_remote_name --tags -q
