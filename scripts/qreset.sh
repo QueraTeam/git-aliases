@@ -50,8 +50,8 @@ done <<<"$local_tags"
 git fetch origin --tags -f -q
 remote_tags=$(git tag -l)
 while IFS= read -r tag; do
+  git tag --delete $tag > /dev/null
   if [[ $tag != submit* ]]; then
-    git tag --delete $tag > /dev/null
     git push -f --delete origin $tag -q > /dev/null
   fi
 done <<<"$remote_tags"
@@ -74,6 +74,8 @@ while IFS= read -r branch; do
     break
   fi
 done <<<"$branches"
+
+rm -rf ".git/rebase-apply"
 
 git push --all -f -q
 git push --tags -f -q
