@@ -3,30 +3,17 @@
 This is a mechanism to reset a local repository to its initial state regarding the Initial Project.
 
 ## How to Run
-You can download either the `python` or `bash` version of the script.
 
 You can simply reset your local project with the following instructions.
 
-### Windows
+### Getting Started
 1. Clone the repo 
 ```shell
 git clone ...
 ```
 
-2. Add **bin** folder to PATH.
+2. Change the working directory with `cd` to the submission project directory.
 
-3. Change the working directory with `cd` to the submission project directory. 
+3. Run the intended single-line version of alias scripts in the working directory.
 
-4. Run `qreset` command in git bash.
-
-### Linux & Mac
-1. Clone the repo
-```shell
-git clone ...
-```
-
-2. Add **scripts** folder to Environment Variables.
-
-3. Change the working directory with `cd` to the submission project directory.
-
-4. Run `qreset.sh` command.
+4. Run `git <qalias>` command in git bash.
