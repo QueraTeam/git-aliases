@@ -68,7 +68,7 @@ class TestScripts(unittest.TestCase):
     TESTS_DIR = BASE_DIR / 'tests'
     INITIALS_DIR = TESTS_DIR / 'initials'
     SUBMITS_DIR = TESTS_DIR / 'submits'
-    VALID_LANG = ('py', 'sh')
+    VALID_LANG = ('sh',)
 
     def setUp(self) -> None:
         self.tearDown()
@@ -96,15 +96,13 @@ class TestScripts(unittest.TestCase):
         shutil.rmtree(self.SUBMITS_DIR, ignore_errors=True)
         shutil.rmtree(self.INITIALS_DIR, ignore_errors=True)
 
-    def run_reset_script(self, initial_repo, dst, lang='py'):
+    def run_reset_script(self, initial_repo, dst, lang='sh'):
         if lang not in self.VALID_LANG:
             raise Exception(f'lang should be one of followings: {self.VALID_LANG}')
 
         script_file_name = f'qreset.{lang}'
         shutil.copy(self.SCRIPTS_DIR / script_file_name, dst)
-        if lang == 'py':
-            run_cmd(f'python3 {script_file_name} {initial_repo}', cwd=dst)
-        elif lang == 'sh':
+        if lang == 'sh':
             # CHECK:
             #   This block of code may fail in Windows.
             #   We can not run a bash script in Windows like this.
@@ -157,20 +155,11 @@ class TestScripts(unittest.TestCase):
         submit_repo_branches = get_branch_names(submit_repo)
         self.assertSetEqual(submit_repo_branches, initial_repo_branches)
 
-    def test_python_reset_commits(self):
-        self.raw_test_reset_commits(lang='py')
-
     def test_bash_reset_commits(self):
         self.raw_test_reset_commits(lang='sh')
 
-    def test_python_test_files(self):
-        self.raw_test_files(lang='py')
-
     def test_bash_test_files(self):
         self.raw_test_files(lang='sh')
-
-    def test_python_test_branches(self):
-        self.raw_test_branches(lang='py')
 
     def test_bash_test_branches(self):
         self.raw_test_branches(lang='sh')
