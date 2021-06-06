@@ -46,7 +46,7 @@ remote_tags=$(git tag -l);
 deleting_tags='';
 for tag in $remote_tags;
 do git tag --delete $tag;
-if echo $tag | grep -Evq '^submit.+\\$';
+if echo $tag | grep -Evq '^submit.+$';
 then deleting_tags="$deleting_tags $tag";
 fi;
 done;
